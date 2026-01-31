@@ -134,7 +134,7 @@ PS.init = function () {
 	PS.color(PS.ALL, PS.ALL, 0x202020);
 	PS.border(PS.ALL, PS.ALL, 0);
 
-	PS.statusText("Click / Drag | 1–3 change colors");
+	PS.statusText("Click / Drag | Click Keys 1–3 change colors");
 
 	PS.audioLoad(clickSound);
 	PS.audioLoad(spreadSound);
@@ -165,11 +165,11 @@ PS.keyDown = function (key) {
 	if (key === 51) paletteIndex = 2; // 3
 
 	COLOR_LIST = PALETTES[paletteIndex];
-	PS.statusText("Click or Drag / Click Number Key (1-3)""Palette " + (paletteIndex + 1));
+	PS.statusText("Palette " + (paletteIndex + 1));
 };
 
 /* =======================
    UNUSED EVENTS
 ======================= */
 
-PS.exit = PS.exitGrid = PS.keyUp = PS.input = function () {};
+PS.exit = PS.exitGrid = PS.keyUp = PS.input = function () { };
