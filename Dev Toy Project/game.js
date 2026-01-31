@@ -10,7 +10,7 @@ By Jason Cortez
 ======================= */
 
 const PALETTES = [
-	// Classic rainbow
+	// 1 — Classic rainbow
 	[
 		PS.COLOR_RED,
 		PS.COLOR_ORANGE,
@@ -21,7 +21,7 @@ const PALETTES = [
 		PS.COLOR_PURPLE
 	],
 
-	// Pastel
+	// 2 — Pastel
 	[
 		0xFFB3BA,
 		0xFFDFBA,
@@ -30,7 +30,7 @@ const PALETTES = [
 		0xBAE1FF
 	],
 
-	// Neon
+	// 3 — Neon
 	[
 		0xFF005D,
 		0xFFFB00,
@@ -53,6 +53,8 @@ let timerId = 0;
 let centerX = 0;
 let centerY = 0;
 let radius = 1;
+
+let mouseDown = false;
 
 /* =======================
    SOUNDS
@@ -89,12 +91,37 @@ const spreadTick = function () {
 	}
 
 	if (changed) {
-		PS.audioPlay(spreadSound, { volume: 0.2 });
+		PS.audioPlay(spreadSound, { volume: 0.15 });
 		radius++;
 	} else {
 		PS.timerStop(timerId);
 		timerId = 0;
 	}
+};
+
+/* =======================
+   SPLASH START
+======================= */
+
+const startSplash = function (x, y, resetColor) {
+	if (resetColor) {
+		currentIndex = Math.floor(Math.random() * COLOR_LIST.length);
+	}
+
+	radius = 1;
+	centerX = x;
+	centerY = y;
+
+	PS.color(x, y, COLOR_LIST[currentIndex % COLOR_LIST.length]);
+	currentIndex++;
+
+	PS.audioPlay(clickSound, { volume: 0.3 });
+
+	if (timerId) {
+		PS.timerStop(timerId);
+	}
+
+	timerId = PS.timerStart(4, spreadTick);
 };
 
 /* =======================
@@ -104,11 +131,10 @@ const spreadTick = function () {
 PS.init = function () {
 	PS.gridSize(24, 24);
 
-	// Dark background for contrast
 	PS.color(PS.ALL, PS.ALL, 0x202020);
 	PS.border(PS.ALL, PS.ALL, 0);
 
-	PS.statusText("Click to splash | 1–3 palettes");
+	PS.statusText("Click / Drag | 1–3 change colors");
 
 	PS.audioLoad(clickSound);
 	PS.audioLoad(spreadSound);
@@ -119,20 +145,18 @@ PS.init = function () {
 ======================= */
 
 PS.touch = function (x, y) {
-	currentIndex = 0;
-	radius = 1;
+	mouseDown = true;
+	startSplash(x, y, true); // click = fresh color
+};
 
-	centerX = x;
-	centerY = y;
-
-	PS.color(x, y, COLOR_LIST[0]);
-	PS.audioPlay(clickSound, { volume: 0.3 });
-
-	if (timerId) {
-		PS.timerStop(timerId);
+PS.enter = function (x, y) {
+	if (mouseDown) {
+		startSplash(x, y, false); // drag = continue colors
 	}
+};
 
-	timerId = PS.timerStart(8, spreadTick);
+PS.release = function () {
+	mouseDown = false;
 };
 
 PS.keyDown = function (key) {
@@ -141,11 +165,11 @@ PS.keyDown = function (key) {
 	if (key === 51) paletteIndex = 2; // 3
 
 	COLOR_LIST = PALETTES[paletteIndex];
+	PS.statusText("Click or Drag / Click Number Key (1-3)""Palette " + (paletteIndex + 1));
 };
 
 /* =======================
    UNUSED EVENTS
 ======================= */
 
-PS.release = PS.enter = PS.exit = PS.exitGrid =
-PS.keyUp = PS.input = function () {};
+PS.exit = PS.exitGrid = PS.keyUp = PS.input = function () {};
