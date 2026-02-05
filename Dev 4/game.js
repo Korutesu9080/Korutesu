@@ -1,4 +1,4 @@
-/* jshint browser : true, devel : true, esversion : 6, freeze : true */
+﻿/* jshint browser : true, devel : true, esversion : 6, freeze : true */
 /* globals PS : true */
 "use strict";
 
