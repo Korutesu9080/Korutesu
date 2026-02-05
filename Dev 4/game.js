@@ -1,4 +1,4 @@
-﻿/* jshint browser : true, devel : true, esversion : 6, freeze : true */
+/* jshint browser : true, devel : true, esversion : 6, freeze : true */
 /* globals PS : true */
 "use strict";
 
@@ -9,9 +9,12 @@ const GRID_HEIGHT = 8;
 // Game state
 let player = { x: 0, y: 0 };
 let gems = [
-    { x: 2, y: 1, collected: false },
+    { x: 1, y: 2, collected: false },
+    { x: 2, y: 5, collected: false },
+    { x: 3, y: 1, collected: false },
     { x: 5, y: 2, collected: false },
-    { x: 4, y: 6, collected: false }
+    { x: 4, y: 6, collected: false },
+    { x: 6, y: 4, collected: false }
 ];
 let door = { x: 7, y: 7, unlocked: false };
 
@@ -56,7 +59,6 @@ function checkGem() {
         if (!gem.collected && gem.x === player.x && gem.y === player.y) {
             gem.collected = true;
             PS.audioPlay("fx_coin1"); // Optional sound effect
-            PS.statusText(`Gem collected! ${gems.filter(g => !g.collected).length} remaining.`);
         }
     });
 
@@ -64,6 +66,8 @@ function checkGem() {
     if (gems.every(g => g.collected)) {
         door.unlocked = true;
         PS.statusText("All gems collected! Door is unlocked!");
+    } else {
+        PS.statusText(`Gems remaining: ${gems.filter(g => !g.collected).length}`);
     }
 }
 
